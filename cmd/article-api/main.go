@@ -2,21 +2,22 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/sawadeeeen/sawaya-api/internal/apps/article-api/getArticles"
 )
 
 func main() {
 	router := gin.Default()
 	v1 := router.Group("/v1")
 	{
-		//	router.GET("/", getArticles)
-		//	router.POST("/create", createArticle)
-		//	router.GET("/:id", getArticleById)
-		//	router.POST("/:id", editArticle)
-		//	router.POST("/", deleteArticle)
-		v1.GET("/", func(c *gin.Context) {
-			c.String(http.StatusOK, "hello")
-		})
+		v1.GET("/", getArticles.GetArticles)
+		// router.POST("/create", createArticle)
+		// router.GET("/:id", getArticleById)
+		// router.POST("/:id", editArticle)
+		// router.POST("/", deleteArticle)
 	}
 	router.Run()
 }
+
+//func getArticles(c *gin.Context) {
+//	c.String(http.StatusOK, "hello")
+//}
