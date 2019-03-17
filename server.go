@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sawadeeeen/sawaya-api/internal/apps/article-api/createArticle"
 	"github.com/sawadeeeen/sawaya-api/internal/apps/article-api/getArticles"
 )
 
@@ -10,14 +11,10 @@ func main() {
 	v1 := router.Group("/v1")
 	{
 		v1.GET("/", getArticles.GetArticles)
-		// router.POST("/create", createArticle)
-		// router.GET("/:id", getArticleById)
-		// router.POST("/:id", editArticle)
-		// router.POST("/", deleteArticle)
+		v1.GET("/create", createArticle.CreateArticle)
+		// v1.GET("/:id", getArticleById)
+		// v1.POST("/:id", editArticle)
+		// v1.POST("/", deleteArticle)
 	}
 	router.Run()
 }
-
-//func getArticles(c *gin.Context) {
-//	c.String(http.StatusOK, "hello")
-//}
