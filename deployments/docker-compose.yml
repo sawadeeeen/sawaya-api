@@ -10,3 +10,16 @@ services:
         #volumes:
         # - ../../../../../:/go
     command: go run server.go
+    depends_on:
+      - "db"
+  db:
+    container_name: db
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./sql/data/:/var/lib/mysql
+    ports:
+      - 3306:3306
+
