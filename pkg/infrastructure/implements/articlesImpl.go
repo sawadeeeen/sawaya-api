@@ -26,7 +26,7 @@ func Store(articles model.Articles) error {
 	//	}
 
 	res, err := db.Prepare(
-		`insert into article(title, content, published, published_at) values(?,?,?,?,?)`,
+		`insert into article(title, content, published, published_at) values(?,?,?,?)`,
 	)
 	//_, err = db.Exec()
 	if err != nil {
