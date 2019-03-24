@@ -12,4 +12,7 @@ type Article struct {
 	Published_at time.Time `json:"timestamp"`
 }
 
-type Articles Article
+//type Articles Article
+type Articles struct {
+	articles []Article `json:"article"`
+}

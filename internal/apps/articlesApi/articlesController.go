@@ -49,17 +49,17 @@ func GetArticles(c *gin.Context) {
 		panic(err.Error())
 	}
 	defer db.Close()
-	//var article []model.Article
+	//	var articles model.Articles
+	var articles []model.Article
 	for rows.Next() {
 		var article model.Article
 		if err := rows.Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at); err != nil {
 			panic(err.Error())
 		}
 		// articleForAdding := model.Articles{article}
-		//articles = append(articles, article)
+		articles = append(articles, article)
 		//	fmt.Println(json.Marshal(articles))
-		b, _ := json.Marshal(article)
-		c.String(http.StatusOK, string(b))
 	}
-
+	jsonAricles, _ := json.Marshal(articles)
+	c.String(http.StatusOK, string(jsonArticles))
 }
