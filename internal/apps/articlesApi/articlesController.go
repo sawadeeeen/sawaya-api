@@ -14,11 +14,11 @@ import (
 func CreateArticle(c *gin.Context) {
 
 	c.Request.ParseForm()
-	var articles *model.Articles
-	c.BindJSON(&articles)
+	var article *model.Article
+	c.BindJSON(&article)
 
 	// can't
-	//err := implements.Store(articles)
+	//err := implements.Store(article)
 	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog")
 	if err != nil {
 		panic(err.Error())
@@ -31,7 +31,7 @@ func CreateArticle(c *gin.Context) {
 		panic(err.Error())
 	}
 
-	_, err = res.Exec(articles.Title, articles.Content, articles.Published)
+	_, err = res.Exec(article.Title, article.Content, article.Published)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -49,9 +49,9 @@ func GetArticles(c *gin.Context) {
 		panic(err.Error())
 	}
 	defer db.Close()
-	//var articles []model.Articles
+	//var article []model.Article
 	for rows.Next() {
-		var article model.Articles
+		var article model.Article
 		if err := rows.Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at); err != nil {
 			panic(err.Error())
 		}
