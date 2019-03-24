@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sawadeeeen/sawaya-api/pkg/domain/model"
 	//"github.com/sawadeeeen/sawaya-api/pkg/infrastructure/implements"
+	"encoding/json"
+	//	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"net/http"
@@ -38,21 +40,26 @@ func CreateArticle(c *gin.Context) {
 }
 
 func GetArticles(c *gin.Context) {
-	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog")
+	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog?parseTime=true")
 	if err != nil {
 		panic(err.Error())
 	}
-	//res, err := db.Prepare(
-	//	`select * from article`,
-	//	)
-	var title string
-	if err := db.QueryRow("SELECT  title FROM article WHERE id = 1 LIMIT 1").Scan(&title); err != nil {
-		//log.Fatal(err)
-		//	panic(err.Error())
+	rows, err := db.Query("SELECT * FROM article ")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+	//var articles []model.Articles
+	for rows.Next() {
+		var article model.Articles
+		if err := rows.Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at); err != nil {
+			panic(err.Error())
+		}
+		// articleForAdding := model.Articles{article}
+		//articles = append(articles, article)
+		//	fmt.Println(json.Marshal(articles))
+		b, _ := json.Marshal(article)
+		c.String(http.StatusOK, string(b))
 	}
 
-	//_, err = db.Exec()
-	//fmt.Println(id)
-
-	c.String(http.StatusOK, title)
 }
