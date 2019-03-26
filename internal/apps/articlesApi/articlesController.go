@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sawadeeeen/sawaya-api/pkg/domain/model"
 	//"github.com/sawadeeeen/sawaya-api/pkg/infrastructure/implements"
+	"encoding/json"
+	//	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"net/http"
@@ -12,11 +14,11 @@ import (
 func CreateArticle(c *gin.Context) {
 
 	c.Request.ParseForm()
-	var articles *model.Articles
-	c.BindJSON(&articles)
+	var article *model.Article
+	c.BindJSON(&article)
 
 	// can't
-	//err := implements.Store(articles)
+	//err := implements.Store(article)
 	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog")
 	if err != nil {
 		panic(err.Error())
@@ -29,7 +31,7 @@ func CreateArticle(c *gin.Context) {
 		panic(err.Error())
 	}
 
-	_, err = res.Exec(articles.Title, articles.Content, articles.Published)
+	_, err = res.Exec(article.Title, article.Content, article.Published)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -38,21 +40,41 @@ func CreateArticle(c *gin.Context) {
 }
 
 func GetArticles(c *gin.Context) {
-	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog")
+	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog?parseTime=true")
 	if err != nil {
 		panic(err.Error())
 	}
-	//res, err := db.Prepare(
-	//	`select * from article`,
-	//	)
-	var title string
-	if err := db.QueryRow("SELECT  title FROM article WHERE id = 1 LIMIT 1").Scan(&title); err != nil {
-		//log.Fatal(err)
-		//	panic(err.Error())
+	rows, err := db.Query("SELECT * FROM article ")
+	if err != nil {
+		panic(err.Error())
 	}
+	defer db.Close()
+	//	var articles model.Articles
+	var articles []model.Article
+	for rows.Next() {
+		var article model.Article
+		if err := rows.Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at); err != nil {
+			panic(err.Error())
+		}
+		articles = append(articles, article)
+	}
+	jsonArticles, _ := json.Marshal(articles)
+	c.String(http.StatusOK, string(jsonArticles))
+}
 
-	//_, err = db.Exec()
-	//fmt.Println(id)
+func GetArticleById(c *gin.Context) {
+	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog?parseTime=true")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+	var article model.Article
+	id := c.Param("id")
+	err = db.QueryRow("SELECT * FROM article WHERE id = ?", id).Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at)
+	if err != nil {
+		panic(err.Error())
+	}
+	jsonArticle, _ := json.Marshal(article)
+	c.String(http.StatusOK, string(jsonArticle))
 
-	c.String(http.StatusOK, title)
 }
