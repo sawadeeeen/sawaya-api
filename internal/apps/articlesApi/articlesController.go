@@ -56,10 +56,25 @@ func GetArticles(c *gin.Context) {
 		if err := rows.Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at); err != nil {
 			panic(err.Error())
 		}
-		// articleForAdding := model.Articles{article}
 		articles = append(articles, article)
-		//	fmt.Println(json.Marshal(articles))
 	}
-	jsonAricles, _ := json.Marshal(articles)
+	jsonArticles, _ := json.Marshal(articles)
 	c.String(http.StatusOK, string(jsonArticles))
+}
+
+func GetArticleById(c *gin.Context) {
+	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog?parseTime=true")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+	var article model.Article
+	id := c.Param("id")
+	err = db.QueryRow("SELECT * FROM article WHERE id = ?", id).Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at)
+	if err != nil {
+		panic(err.Error())
+	}
+	jsonArticle, _ := json.Marshal(article)
+	c.String(http.StatusOK, string(jsonArticle))
+
 }

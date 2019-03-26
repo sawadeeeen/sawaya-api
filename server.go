@@ -11,7 +11,7 @@ func main() {
 	{
 		v1.GET("/", articlesApi.GetArticles)
 		v1.POST("/", articlesApi.CreateArticle)
-		// v1.GET("/:id", getArticleById)
+		v1.GET("/:id", articlesApi.GetArticleById)
 		// v1.POST("/:id", editArticle)
 		// v1.POST("/", deleteArticle)
 	}
