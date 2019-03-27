@@ -5,7 +5,7 @@ import (
 	"github.com/sawadeeeen/sawaya-api/pkg/domain/model"
 	//"github.com/sawadeeeen/sawaya-api/pkg/infrastructure/implements"
 	"encoding/json"
-	"fmt"
+	//"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"net/http"
@@ -86,17 +86,17 @@ func UpdateArticle(c *gin.Context) {
 		panic(err.Error())
 	}
 	defer db.Close()
-	//id := c.Param("id")
+	id := c.Param("id")
 
 	c.Request.ParseForm()
 	var article *model.Article
 	c.BindJSON(&article)
 
-	//res, err := db.Prepare(`UPDATE article SET title=?,content=?,published=?,Published_at=now() WHERE id=?;`)
+	res, err := db.Prepare(`UPDATE article SET title=?,content=?,published=?,Published_at=now() WHERE id=?;`)
 	if err != nil {
 		panic(err.Error())
 	}
-	//_, err = res.Exec(article.Title, article.Content, article.Published, id)
+	_, err = res.Exec(article.Title, article.Content, article.Published, id)
 	if err != nil {
 		panic(err.Error())
 	}
