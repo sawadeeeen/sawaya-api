@@ -1,29 +1,21 @@
 package articlesApi
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/sawadeeeen/sawaya-api/pkg/domain/model"
-	//"github.com/sawadeeeen/sawaya-api/pkg/infrastructure/implements"
-	"encoding/json"
-	//"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
+	"github.com/sawadeeeen/sawaya-api/pkg/infrastructure/database"
 	"net/http"
-	//	"strconv"
 )
 
 func CreateArticle(c *gin.Context) {
 
+	db := database.Init()
+	defer db.Close()
+
 	c.Request.ParseForm()
 	var article *model.Article
 	c.BindJSON(&article)
-
-	// can't
-	//err := implements.Store(article)
-	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog")
-	if err != nil {
-		panic(err.Error())
-	}
 
 	res, err := db.Prepare(
 		`insert into article(title, content, published, published_at) values(?,?,?,now())`,
@@ -37,19 +29,16 @@ func CreateArticle(c *gin.Context) {
 		panic(err.Error())
 	}
 
-	defer db.Close()
 }
 
 func GetArticles(c *gin.Context) {
-	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog?parseTime=true")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := database.Init()
+	defer db.Close()
+
 	rows, err := db.Query("SELECT * FROM article ")
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
 	//	var articles model.Articles
 	var articles []model.Article
 	for rows.Next() {
@@ -64,14 +53,12 @@ func GetArticles(c *gin.Context) {
 }
 
 func GetArticleById(c *gin.Context) {
-	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog?parseTime=true")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := database.Init()
 	defer db.Close()
+
 	var article model.Article
 	id := c.Param("id")
-	err = db.QueryRow("SELECT * FROM article WHERE id = ?", id).Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at)
+	err := db.QueryRow("SELECT * FROM article WHERE id = ?", id).Scan(&article.Id, &article.Title, &article.Content, &article.Published, &article.Published_at)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -81,10 +68,7 @@ func GetArticleById(c *gin.Context) {
 }
 
 func UpdateArticle(c *gin.Context) {
-	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := database.Init()
 	defer db.Close()
 	id := c.Param("id")
 
@@ -103,10 +87,7 @@ func UpdateArticle(c *gin.Context) {
 }
 
 func DeleteArticle(c *gin.Context) {
-	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog")
-	if err != nil {
-		panic(err.Error())
-	}
+	db := database.Init()
 	defer db.Close()
 
 	id := c.Param("id")
