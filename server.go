@@ -13,7 +13,7 @@ func main() {
 		v1.POST("/", articlesApi.CreateArticle)
 		v1.GET("/:id", articlesApi.GetArticleById)
 		v1.PUT("/:id", articlesApi.UpdateArticle)
-		// v1.POST("/", deleteArticle)
+		v1.DELETE("/:id", articlesApi.DeleteArticle)
 	}
 	router.Run()
 }

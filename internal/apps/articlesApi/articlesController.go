@@ -101,3 +101,22 @@ func UpdateArticle(c *gin.Context) {
 		panic(err.Error())
 	}
 }
+
+func DeleteArticle(c *gin.Context) {
+	db, err := sqlx.Open("mysql", "root:root@tcp(localhost:3306)/ianBlog")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	id := c.Param("id")
+
+	res, err := db.Prepare(`DELETE FROM article WHERE id = ? LIMIT 1`)
+	if err != nil {
+		err.Error()
+	}
+	_, err = res.Exec(id)
+	if err != nil {
+		err.Error()
+	}
+}
